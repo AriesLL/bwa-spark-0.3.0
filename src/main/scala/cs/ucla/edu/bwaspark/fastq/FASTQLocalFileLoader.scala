@@ -25,6 +25,14 @@ class FASTQLocalFileLoader {
    var isEOF = false
    var batchedLineNum = 10000000; // the number of reads processed each time
 
+   /**
+     *  Read the FASTQ file from a local directory 
+     *  This function reads only partial FASTQs and should be called several times to read the whole FASTQ file
+     *  
+     *  @param reader the Java BufferedReader object to read a file line by line
+     *  @param sc the spark context
+     *  @param batchedNum the number of lines to read per batch
+     */
    def batchedRDDReader(reader: BufferedReader, sc: SparkContext, batchedNum: Int): RDD[(Null, SerializableFASTQRecord)] = {
       val charset = Charset.forName("ASCII")
       val encoder = charset.newEncoder()
@@ -79,6 +87,15 @@ class FASTQLocalFileLoader {
    }   
 
 
+   /**
+     *  Read the FASTQ file from the local file system and store it in HDFS
+     *  The FASTQ is encoded and compressed in the Parquet+Avro format in HDFS 
+     *
+     *  @param sc the spark context
+     *  @param inFile the input FASTQ file in the local file system
+     *  @param outFileRootPath the root path of the output FASTQ files in HDFS. 
+     *    Note that there will be several directories since the local large FASTQ file is read and stored in HDFS with several batches
+     */
    def storeFASTQInHDFS(sc: SparkContext, inFile: String, outFileRootPath: String) {
       val reader = new BufferedReader(new FileReader(inFile))
 
@@ -108,3 +125,4 @@ class FASTQLocalFileLoader {
    }
 
 }
+
