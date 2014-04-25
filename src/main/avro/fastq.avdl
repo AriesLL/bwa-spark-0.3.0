@@ -6,7 +6,7 @@ record FASTQRecord {
     bytes seq;
     bytes quality;
     int seqLength;
-    bytes comment = null;
+    bytes comment;
 }
 
 }

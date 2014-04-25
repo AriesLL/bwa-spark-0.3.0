@@ -54,7 +54,7 @@ class FASTQLocalFileLoader {
                   // read out the third line
                   reader.readLine()
                   val quality = encoder.encode( CharBuffer.wrap(reader.readLine()) )
-                  val record = new FASTQRecord(name, seq, quality, seqLength, null)
+                  val record = new FASTQRecord(name, seq, quality, seqLength, encoder.encode( CharBuffer.wrap("") ))
                   records = record :: records
                } else if(lineFields.length == 2) {
                   val name = encoder.encode( CharBuffer.wrap(lineFields(0)) );
