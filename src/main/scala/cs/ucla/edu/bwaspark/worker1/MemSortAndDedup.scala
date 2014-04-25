@@ -57,13 +57,10 @@ object MemSortAndDedup {
                 if(or > maskLevelRedun * mr && oq > maskLevelRedun * mq) {
                   if(regs(i).score < regs(j).score) {
                     regs(i).qEnd = regs(i).qBeg
-                    println(i + " " + or + " " + oq)
                     break
                   }
-                  else {
+                  else 
                     regs(j).qEnd = regs(j).qBeg
-                    println(j + " " + or + " " + oq)
-                  }
                 }
               }             
  
