@@ -8,6 +8,7 @@ import cs.ucla.edu.bwaspark.worker1.MemChain._
 import cs.ucla.edu.bwaspark.worker1.MemChainFilter._
 import cs.ucla.edu.bwaspark.worker1.MemChainToAlign._
 import cs.ucla.edu.bwaspark.worker1.MemSortAndDedup._
+import cs.ucla.edu.avro.fastq._
 
 //this standalone object defines the main job of BWA MEM:
 //1)for each read, generate all the possible seed chains
@@ -20,9 +21,8 @@ object BWAMemWorker1 {
                     bns: BNTSeqType, //.ann, .amb files
                     pac: Array[Byte], //.pac file uint8_t
                     pes: Array[MemPeStat], //pes array
-                    len: Int, //the length of the read
-                    seq: String //a read
-                    ): MutableList[MemAlnRegType] = { //all possible alignment  
+                    seq: FASTQRecord //a read
+                    ): ReadType = { //all possible alignment  
 
     //for paired alignment, to add
     //!!!to add!!!
@@ -48,10 +48,13 @@ object BWAMemWorker1 {
         }
       }
 
-      val read: Array[Byte] = seq.toCharArray.map(ele => locusEncode(ele))
+      val seqStr = new String(seq.getSeq.array)
+      val read: Array[Byte] = seqStr.toCharArray.map(ele => locusEncode(ele))
 
       //first step: generate all possible MEM chains for this read
-      val chains = generateChains(opt, bwt, bns.l_pac, len, read) 
+      //println("Seq Length: " + seq.getSeqLength)
+      //println(seqStr)
+      val chains = generateChains(opt, bwt, bns.l_pac, seq.getSeqLength, read) 
 
       //second step: filter chains
       val chainsFiltered = memChainFilter(opt, chains)
@@ -63,14 +66,17 @@ object BWAMemWorker1 {
 
       for (i <- 0 until chainsFiltered.length) {
         //alignRegArray = memChainToAln(opt, bns.l_pac, pac, len, read, chainsFiltered(i), regs)
-        regs = memChainToAln(opt, bns.l_pac, pac, len, read, chainsFiltered(i), regs)
+        regs = memChainToAln(opt, bns.l_pac, pac, seq.getSeqLength, read, chainsFiltered(i), regs)
       }
-      //last step: sorting and deduplication
 
-      //val pureRegArray = memSortAndDedup(alignRegArray, opt.maskLevelRedun)
+      //last step: sorting and deduplication
       val pureRegArray = memSortAndDedup(regs, opt.maskLevelRedun)
 
-      pureRegArray
+      val readRet = new ReadType
+      readRet.seq = seq
+      readRet.regs = pureRegArray
+
+      readRet
     }
     else {
       assert (false)

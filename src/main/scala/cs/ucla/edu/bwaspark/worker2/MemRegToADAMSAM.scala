@@ -125,7 +125,6 @@ object MemRegToADAMSAM {
   }
 	
 
-  // wrapper implementation only for now
   /**
     *  Transform the alignment registers to alignment type
     *
@@ -268,6 +267,10 @@ object MemRegToADAMSAM {
     }
   }
 
+
+  //private def memAlnToSAM(bns: BNTSeqType, samStr: String)  
+
+
   /**
     *  Calculate the approximate mapq value
     *
@@ -312,7 +315,6 @@ object MemRegToADAMSAM {
 
   }  
 
-  // wrapper implementation only for now
   private def bwaFixXref2(mat: Array[Byte], oDel: Int, eDel: Int, oIns: Int, eIns: Int, w: Int, bns: BNTSeqType, 
     pac: Array[Byte], query: Array[Byte], qBeg: Int, qEnd: Int, rBeg: Long, rEnd: Long): (Int, Int, Long, Long, Int) = {
     var retArray = new Array[Int](5)

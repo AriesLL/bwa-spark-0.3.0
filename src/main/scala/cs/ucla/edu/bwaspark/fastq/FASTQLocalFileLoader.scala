@@ -21,9 +21,9 @@ import parquet.hadoop.metadata.CompressionCodecName
 
 import java.util.logging.{Level, Logger}
 
-class FASTQLocalFileLoader {
+// batchedLineNum: the number of reads processed each time
+class FASTQLocalFileLoader(batchedLineNum: Int) {
    var isEOF = false
-   var batchedLineNum = 10000000; // the number of reads processed each time
 
    /**
      *  Read the FASTQ file from a local directory 
